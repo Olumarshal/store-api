@@ -1,5 +1,5 @@
 require('dotenv').config()
-// async errors
+require('express-async-errors')
 
 
 const express = require('express');
@@ -8,7 +8,8 @@ const app = express();
 const notFoundMiddleware = require('./middleware/not-found')
 const errorMiddleware = require('./middleware/error-handler')
 
-const connectToDB = require('./db/connect')
+const Database = require('./db/connect')
+const productsRouter = require('./routes/products')
 
 
 // middleware
@@ -19,7 +20,7 @@ app.get('/', (req, res) => {
     res.send('<h1>Store API</h1><a href="/api/v1/products">products route</a>')
 })
 
-
+app.use('/api/v1/products', productsRouter)
 
 
 // product route
@@ -32,7 +33,7 @@ const port = process.env.PORT || 3000
 const start = async () => {
     try {
         // connectDB
-        await connectToDB
+        await Database.connectToDB();
         app.listen(port, console.log(`Server is listening on port ${port}...`))
     } catch (error) {
         console.log(error)
